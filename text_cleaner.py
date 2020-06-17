@@ -3,6 +3,19 @@ import nltk, os
 from urllib import request
 from nltk import *
 
+def cleantext(file,path):
+    fnew = open(path+'/'+'no_emptyline.txt', 'w+')
+    fnew.truncate()  # clear the content of new file
+    raw = file.replace('\n', ' ')
+    text = raw.lower()
+    sentences = sent_tokenize(text)
+    for sentence in sentences:
+        lines = re.split('\n+', sentence)  # exclude extra empty lines
+        for line in lines:
+            newline = ' '.join(line.split())  # exclude extra spaces
+            fnew.write(newline)
+            fnew.write('\n')
+    fnew.close()
 
 def No_EmptyLine_Local(filepath):
     file = open(filepath, 'r')
