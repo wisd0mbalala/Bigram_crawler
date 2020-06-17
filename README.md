@@ -7,4 +7,4 @@ Environments:
   Python version 3.7  
   Required Packages: nltk, urllib, os, tkinter  
   
-  
+Open 2gram.py and run as its instruction
