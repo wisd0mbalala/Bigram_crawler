@@ -7,72 +7,116 @@ from tkinter import filedialog
 from tkinter import messagebox
 from urllib import request
 from nltk import *
-
+from bigram_generator import BigramGenerator
+target_directory = {}
 
 # Local Text Submission
-def opentxt():
-    filename = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                          filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
-    filepath = filename
-    file = open(filepath, 'r')
-    file = file.read()
-    file_i = str(file)
-    return file_i
+def local_submission():
+    def selectPath():
+        path_ = filedialog.askdirectory()
+        path.set(path_)
+        target_directory[0]=path.get()
+        print(target_directory[0])
+    def opentxt():
+        file = filedialog.askopenfilename(initialdir="/", title="Select file",
+                                              filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
+
+        file_ = open(file, 'r')
+        txtfile = file_.read()
+        filename.set(file)
+        cleantext(path, txtfile)
+        tkinter.messagebox.showinfo('Tipps', 'File Created!')
+        window_local.destroy()
+
+    def cleantext(path, file):
+        file_to_open = os.path.join(path.get(), "no_emptyline.txt")
+        fnew = open(file_to_open, 'w')
+        fnew.truncate()  # clear the content of new file
+        raw = file.replace('\n', ' ')
+        text = raw.lower()
+        sentences = sent_tokenize(text)
+        for sentence in sentences:
+            lines = re.split('\n+', sentence)  # exclude extra empty lines
+            for line in lines:
+                newline = ' '.join(line.split())  # exclude extra spaces
+                fnew.write(newline)
+                fnew.write('\n')
+        fnew.close()
+
+
+    # TopLevel Window
+    window_local = tk.Toplevel(root)
+    window_local.geometry('550x200')
+    window_local.title('Local File')
+
+    path = StringVar()  # give the link to the string value
+    filename = StringVar()
+
+    Label(window_local, text="Target Directory to store the file:").place(x=20, y=50)
+    Entry(window_local, textvariable=path).place(x=230, y=50)
+    Button(window_local, text="Select your Directory", command=selectPath).place(x=400, y=50)
+
+    Label(window_local, text="Select your txt file:").place(x=20, y=120)
+    Entry(window_local, textvariable=filename).place(x=230, y=120)
+    Button(window_local, text="Select and Submit", command=opentxt).place(x=400, y=120)
+
 
 
 # URL Link Submission
 def url_submisson():
+    def selectPath():
+        path_ = filedialog.askdirectory()
+        path.set(path_)
+        target_directory[0]=path.get()
+        print(target_directory[0])
     def confirm_submission():
         url_link = url.get()
         response = request.urlopen(url_link)
         file = response.read().decode('utf8')
 
         tkinter.messagebox.showinfo(title='Thanks', message='Your URL Link is received!')
+        cleantext(path,file)
         # Close toplevel window
         window_link.destroy()
-        print(file)
-        return file
+
+    def cleantext(path, file):
+        file_to_open = os.path.join(path.get(), "no_emptyline.txt")
+        fnew = open(file_to_open, 'w')
+        fnew.truncate()  # clear the content of new file
+        raw = file.replace('\n', ' ')
+        text = raw.lower()
+        sentences = sent_tokenize(text)
+        for sentence in sentences:
+            lines = re.split('\n+', sentence)  # exclude extra empty lines
+            for line in lines:
+                newline = ' '.join(line.split())  # exclude extra spaces
+                fnew.write(newline)
+                fnew.write('\n')
+        fnew.close()
 
     # TopLevel Window
     window_link = tk.Toplevel(root)
-    window_link.geometry('420x200')
+    window_link.geometry('650x200')
     window_link.title('URL Link')
 
+    path = StringVar()
     url = tk.StringVar()  # give the link to the string value
     url.set('http://www.gutenberg.org/files/2554/2554-0.txt')
-    tk.Label(window_link, text='URL Link: ').place(x=10, y=50)
-    link = tk.Entry(window_link, textvariable=url, width=40)
-    link.place(x=130, y=50)
 
-    # comfirm_submission button
-    comfirm_submission = tk.Button(window_link, text='Submit', command=confirm_submission)
-    comfirm_submission.place(x=180, y=120)
+    Label(window_link, text="Target Directory to store the file:").place(x=10, y=50)
+    Entry(window_link, textvariable=path).place(x=230, y=50)
+    Button(window_link, text="Select your Directory", command=selectPath).place(x=500, y=50)
 
-
-def selectPath():
-    path_ = filedialog.askdirectory()
-    path.set(path_)
+    Label(window_link, text='URL Link: ').place(x=10, y=130)
+    Entry(window_link, textvariable=url, width=40).place(x=230, y=130)
+    Button(window_link, text="Submit", command=confirm_submission).place(x=550, y=130)
 
 
-def cleantext(path, file):
-    file_to_open = os.path.join(path.get(), "no_emptyline.txt")
-    fnew = open(file_to_open, 'w+')
-    fnew.truncate()  # clear the content of new file
-    raw = file.replace('\n', ' ')
-    print(raw)
-    text = raw.lower()
-    print(text)
-    sentences = sent_tokenize(text)
-    print(sentences)
-    for sentence in sentences:
-        lines = re.split('\n+', sentence)  # exclude extra empty lines
-        print(lines)
-        for line in lines:
-            newline = ' '.join(line.split())  # exclude extra spaces
-            print(newline)
-            fnew.write(newline)
-            fnew.write('\n')
-    fnew.close()
+
+
+
+
+
 
 
 # object the window
@@ -81,30 +125,35 @@ root = tk.Tk()
 root.title('BigramCrawler')
 
 # diameter of the window
-root.geometry('400x400')
+root.geometry('600x550')
+
+
+
 
 # wellcome image
-canvas = tk.Canvas(root, width=400, height=135, bg='green')
+canvas = tk.Canvas(root, width=600, height=300, bg='green')
 image_file = tk.PhotoImage(file='bigram.png')
 image = canvas.create_image(200, 0, anchor='n', image=image_file)
 canvas.pack(side='top')
 tk.Label(root,
-         text='Hi！This is the Bigram Crawler. \nWe can extract bigrams from English texts.\n You can either select a txt file from local,\n or give us url link to a txt file.',
+         text='Hi！This is the Bigram Crawler. \nWe can extract bigrams from English texts.\n You can either select a '
+              'txt file from local,\n or give us URL link to a txt file.',
          font=('Arial', 16)).pack()
 
-path = StringVar()
-folder = StringVar()
-file_i = ''
+
 
 # object the buttons
-local_txt = tk.Button(root, text='Local File', command=opentxt)
-local_txt.place(x=70, y=300)
+Label(root, text="Choose your way to provide the text:",
+         font=('Arial', 12)).place(x=20, y=420)
+local_txt = tk.Button(root, text='Local File', command=local_submission)
+local_txt.place(x=330, y=418)
 url_link = tk.Button(root, text='URL Link', command=url_submisson)
-url_link.place(x=200, y=300)
-target_path = tk.Button(root, text='Target Directory', command=selectPath)
-target_path.place(x=70, y=350)
-clean_file = tk.Button(root, text='Clean the Text', command=cleantext(path, file_i))
-clean_file.place(x=200, y=350)
+url_link.place(x=430, y=418)
+
+'''Label(root, text="Bigram Crawling and Storing:",
+         font=('Arial', 12)).place(x=20, y=450)
+bigram_crawl = tk.Button(root, text='Crawl Bigrams', command=BigramGenerator(set(target_directory[0])))
+bigram_crawl.place(x=330, y=448)'''
 
 # Mainloop of the window
 root.mainloop()
