@@ -7,10 +7,10 @@ from collections import Counter
 
 
 def BigramGenerator(filepath):
-	file = open(filepath + '_no_emptyline.txt', 'rt')
+	file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
 	#file_rawBigrams = open(filepath + '_raw_bigrams.txt', 'w+')
 	#file_rawBigrams.truncate()
-	file_Bigrams = open(filepath + '_bigrams.txt', 'w+')
+	file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
 	file_Bigrams.truncate()
 	text = file.readlines()
 	file.close()
