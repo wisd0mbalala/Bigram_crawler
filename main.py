@@ -1,67 +1,134 @@
-# -*- coding:utf-8 -*-
-# __Program__ = "Bigram Extrator"
-# __Author__ = "Lingzhi Li"
-# __date__ = "2020/06/02"
-# __Desc__ = A simple application that extracts bigrams from text and calculate the frequencies.
-import tkinter
+# -*- coding: utf-8 -*-
+
+import os.path
+import tkinter as tk
 from tkinter import *
+import tkinter.messagebox as messagebox
 from tkinter import filedialog
-from tkinter import ttk  # ttk makes the button on macos visible
-import tkinter.messagebox as mbox
-
-root = tkinter.Tk()
-
-
-# 定义MainUI类表示应用/窗口，继承Frame类
-class MainUI(ttk.Frame):
-    # Application构造函数，master为窗口的父控件
-    def __init__(self, master=None):
-        # 初始化Application的Frame部分
-        ttk.Frame.__init__(self, master)
-        # 显示窗口，并使用grid布局
-        self.grid()
-        # 创建控件
-        self.createWidgets()
-
-    # 创建控件
-    def createWidgets(self):
-        # 创建一个标签，输出要显示的内容
-        self.firstLabel = ttk.Label(self, text="A simple application that extracts bigrams")
-        # 设定使用grid布局
-        self.firstLabel.grid()
-        # 创建一个按钮，用来触发opentxt方法
-        self.clickButton = ttk.Button(self, text="open local txt file？", command=self.opentxt)
-        # 设定使用grid布局
-        self.clickButton.grid()
-        # 创建一个按钮，用来触发opentxt方法
-        self.clickButton = ttk.Button(self, text="import txt file from web？", command=self.urlentry)
-        # 设定使用grid布局
-        self.clickButton.grid()
-
-    def answer(self):
-        # 我们通过 messagebox 来显示一个提示框
-        mbox.showinfo("「人人都是Pythonista」", '''
-    这是一个专注Python的星球，我们提供「从零单排」、「实战项目」、「大航海」、「技术沙龙」、「技术分享」、「大厂内推」等系列供你选择及学习，当然也会有周边技术沿伸。
-    本星球会不定期开展各类实战项目，阶段性组织线上技术沙龙、分享等；对于职业发展路线不明确的，我们会邀请到一些大厂hr及高级开发、经理等给大家解惑。
-    加入我们，和千人一起玩Python，To be a Pythonista！
-    ''')
-
-    def opentxt(self):
-        root.filename = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                                   filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
-        print(root.filename)
-
-    def urlentry(self):
-        url = ttk.Entry(root, show=None, font=('Arial', 14))
-        url.pack()
-        print(url)
+from nltk import *
+from urllib import request
+from bigram_generator import BigramGenerator
 
 
-# 创建一个MainUI对象
-app = MainUI()
-# 设置窗口标题
-app.master.title('Bigram Crawler')
-# 设置窗体大小
-app.master.geometry('400x100')
-# 主循环开始
-app.mainloop()
+def createpage(master):
+    def selectPath():
+        path_ = filedialog.askdirectory()
+        path.set(path_)
+
+    path = StringVar()  # give the link to the string value
+
+    # Local Text Submission
+    def local_submission():
+
+        def opentxt():
+            file = filedialog.askopenfilename(initialdir="/", title="Select file",
+                                              filetypes=(("txt files", "*.txt"), ("all files", "*.*")))
+
+            file_ = open(file, 'r')
+            txtfile = file_.read()
+            filename.set(file)
+            cleantext(path, txtfile)
+
+            tkinter.messagebox.showinfo('Tipps', 'File Created!')
+            window_local.destroy()
+
+        def cleantext(path, file):
+            file_to_open = os.path.join(path.get(), "no_emptyline.txt")
+            fnew = open(file_to_open, 'w')
+            fnew.truncate()  # clear the content of new file
+            raw = file.replace('\n', ' ')
+            text = raw.lower()
+            sentences = sent_tokenize(text)
+            for sentence in sentences:
+                lines = re.split('\n+', sentence)  # exclude extra empty lines
+                for line in lines:
+                    newline = ' '.join(line.split())  # exclude extra spaces
+                    fnew.write(newline)
+                    fnew.write('\n')
+            fnew.close()
+
+        # TopLevel Window
+        window_local = tk.Toplevel(root)
+        window_local.geometry('550x200')
+        window_local.title('Local File')
+
+        filename = StringVar()
+
+        Label(window_local, text="Select your txt file:").place(x=20, y=120)
+        Entry(window_local, textvariable=filename).place(x=230, y=120)
+        Button(window_local, text="Select and Submit", command=opentxt).place(x=400, y=120)
+
+    # URL Link Submission
+    def url_submisson():
+
+        def confirm_submission():
+            url_link = url.get()
+            response = request.urlopen(url_link)
+            file = response.read().decode('utf8')
+
+            tkinter.messagebox.showinfo(title='Thanks', message='Your URL Link is received!')
+            cleantext(path, file)
+            # Close toplevel window
+            window_link.destroy()
+
+        def cleantext(path, file):
+            file_to_open = os.path.join(path.get(), "no_emptyline.txt")
+            fnew = open(file_to_open, 'w')
+            fnew.truncate()  # clear the content of new file
+            raw = file.replace('\n', ' ')
+            text = raw.lower()
+            sentences = sent_tokenize(text)
+            for sentence in sentences:
+                lines = re.split('\n+', sentence)  # exclude extra empty lines
+                for line in lines:
+                    newline = ' '.join(line.split())  # exclude extra spaces
+                    fnew.write(newline)
+                    fnew.write('\n')
+            fnew.close()
+
+        # TopLevel Window
+        window_link = tk.Toplevel(root)
+        window_link.geometry('650x200')
+        window_link.title('URL Link')
+
+        url = tk.StringVar()  # give the link to the string value
+        url.set('http://www.gutenberg.org/files/2554/2554-0.txt')
+
+        Label(window_link, text='URL Link: ').place(x=10, y=130)
+        Entry(window_link, textvariable=url, width=40).place(x=230, y=130)
+        Button(window_link, text="Submit", command=confirm_submission).place(x=550, y=130)
+
+    master = Frame(root)
+    master.pack()
+
+    Label(master, text="1.Select your Target Directory:").grid(row=0, column=0, stick=W, pady=10)
+    e1 = Entry(master, textvariable=path, width=30)
+    e1.grid(row=0, column=1, stick=W)
+    Button(master, text="Select Directory", command=selectPath).grid(row=0, column=4,stick=E)
+
+    Label(master, text="2.Choose your way to upload the text:").grid(row=1, column=0, stick=W, pady=10)
+    Button(master,text='Local File', command = local_submission).grid(row=1, column=3, stick=E)
+    Button(master,text='URL Link', command = url_submisson).grid(row=1, column=4, stick=E)
+
+    Label(master, text="3.Crawl and store bigrams:").grid(row=2, column=0, stick=W, pady=10)
+    # Button传递参数
+    Button(master,text='Crawl Bigrams', command=lambda: BigramGenerator(e1.get())).grid(row=2, column=4, stick=E)
+
+
+
+
+if __name__ == '__main__':
+    root = Tk()
+    root.title('BigramCrawler')
+    root.geometry('630x550')
+    # wellcome image
+    canvas = tk.Canvas(root, width=600, height=300, bg='green')
+    image_file = tk.PhotoImage(file='bigram.png')
+    image = canvas.create_image(200, 0, anchor='n', image=image_file)
+    canvas.pack(side='top')
+    tk.Label(root,
+             text='Hi！This is a Bigram Crawler. \nI can extract bigrams from English texts.',
+             font=('Arial', 16)).pack()
+    createpage(root)
+
+    root.mainloop()
