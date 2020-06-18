@@ -122,9 +122,9 @@ if __name__ == '__main__':
     root.title('BigramCrawler')
     root.geometry('800x550')
     # wellcome image
-    canvas = tk.Canvas(root, width=600, height=300, bg='green')
+    canvas = tk.Canvas(root, width=800, height=300, bg='green')
     image_file = tk.PhotoImage(file='bigram.gif')
-    image = canvas.create_image(200, 0, anchor='n', image=image_file)
+    image = canvas.create_image(400, 0, anchor='n', image=image_file)
     canvas.pack(side='top')
     tk.Label(root,
              text='Hi！This is a Bigram Crawler. \nI can extract bigrams from English texts.',

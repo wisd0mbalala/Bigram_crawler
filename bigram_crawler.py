@@ -8,7 +8,7 @@ from collections import Counter
 import tkinter.messagebox as messagebox
 
 def bigrams_to_csv(filepath):
-    # tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient! Once it is finished, It will give you a notification!')
+    tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient! Once it is finished, It will give you a notification!')
 
     file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
     #file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
@@ -36,9 +36,6 @@ def bigrams_to_csv(filepath):
                 #file_Bigrams.write('\n')
 
     #file_Bigrams.close()
-    # tkinter.messagebox.showinfo(title='Thanks', message='File Created!')
-
-
 
 
     count_times = []
@@ -135,3 +132,5 @@ def bigrams_to_csv(filepath):
         r.append(str(Value[num]))
         write.writerow(r)
         num += 1
+
+    tkinter.messagebox.showinfo(title='Thanks', message='File Created!')
