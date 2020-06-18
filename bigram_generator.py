@@ -8,11 +8,11 @@ import tkinter.messagebox as messagebox
 
 
 def BigramGenerator(filepath):
-	tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient! Once it is finished, It will give you a notification!')
+	# tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient! Once it is finished, It will give you a notification!')
 
 	file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
-	#file_rawBigrams = open(filepath + '_raw_bigrams.txt', 'w+')
-	#file_rawBigrams.truncate()
+	# file_rawBigrams = open(filepath + '_raw_bigrams.txt', 'w+')
+	# file_rawBigrams.truncate()
 	file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
 	file_Bigrams.truncate()
 	text = file.readlines()
@@ -23,11 +23,12 @@ def BigramGenerator(filepath):
 	for x in text:
 		tokens = word_tokenize(x)
 		step = 2
-		list = [tokens[i:i + 2] for i in range(0, len(tokens), 1)]  # loop through every two tokens to create raw Bigrams
+		list = [tokens[i:i + 2] for i in
+				range(0, len(tokens), 1)]  # loop through every two tokens to create raw Bigrams
 		for ii in list:
 			# print(ii)
-			#file_rawBigrams.write(str(ii))
-			#file_rawBigrams.write('\n')
+			# file_rawBigrams.write(str(ii))
+			# file_rawBigrams.write('\n')
 			# exclude puctuations and stopwords
 			stop_words = set(stopwords.words('english'))
 			i = [i for i in ii if i.isalpha() and i not in stop_words]
@@ -37,34 +38,32 @@ def BigramGenerator(filepath):
 				file_Bigrams.write('\n')
 
 	file_Bigrams.close()
-	tkinter.messagebox.showinfo(title='Thanks', message='File Created!')
+	# tkinter.messagebox.showinfo(title='Thanks', message='File Created!')
 
-	#print(list_a)
-	#print(len(list_a))
+	# print(list_a)
+	# print(len(list_a))
 
 	List = list_a
-	#file_rawBigrams.close()
-
-
+	# file_rawBigrams.close()
 
 	count_times = []
 	for i in List:
 		count_times.append(List.count(i))
 		m = max(count_times)
 		n = count_times.index(m)
-	#print(count_times)
-	#print(len(count_times))
+	# print(count_times)
+	# print(len(count_times))
 
 	'''Dict = {}
 	Dict = dict(zip(List,count_times))
 	print(Dict)'''
 
-	#L = len(List) - len(count_times)
-	#print(L)
-
+	# L = len(List) - len(count_times)
+	# print(L)
 
 	index = 0
 	D = {}
+
 	no_dupDict = {}
 	no_dup = []
 	newList = []
@@ -73,10 +72,25 @@ def BigramGenerator(filepath):
 		l = []
 		for i in ii:
 			l.append(i)
-		D[l[0]+'-'+l[1]] = count_times[index]
+		D[l[0] + '-' + l[1]] = count_times[index]
 		index = index + 1
 
-	D = sorted(D.items(), key=lambda item:item[1], reverse=True)
+	D = sorted(D.items(), key=lambda item: item[1], reverse=True)
 	print(D)
 	print(len(D))
-	return
+
+	L = []
+	ind = 0
+	for ii in List:
+		l = []
+		for i in ii:
+			l.append(i)
+		x = l[0] + ',' + l[1] + ',' + str(count_times[ind])
+		if x not in L:
+			L.append(x)
+		ind += 1
+
+	print(L)
+	print(len(L))
+
+	return L , D
