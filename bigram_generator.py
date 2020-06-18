@@ -4,13 +4,16 @@ from urllib import request
 from nltk import *
 from nltk.corpus import stopwords
 from collections import Counter
+import tkinter.messagebox as messagebox
 
 
 def BigramGenerator(filepath):
-	file = open(filepath + '_no_emptyline.txt', 'rt')
+	tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient! Once it is finished, It will give you a notification!')
+
+	file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
 	#file_rawBigrams = open(filepath + '_raw_bigrams.txt', 'w+')
 	#file_rawBigrams.truncate()
-	file_Bigrams = open(filepath + '_bigrams.txt', 'w+')
+	file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
 	file_Bigrams.truncate()
 	text = file.readlines()
 	file.close()
@@ -34,6 +37,8 @@ def BigramGenerator(filepath):
 				file_Bigrams.write('\n')
 
 	file_Bigrams.close()
+	tkinter.messagebox.showinfo(title='Thanks', message='File Created!')
+
 	#print(list_a)
 	#print(len(list_a))
 
