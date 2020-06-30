@@ -3,12 +3,13 @@ import nltk, os
 from urllib import request
 from nltk import *
 
-def cleantext(file,path):
-    fnew = open(path+'/'+'no_emptyline.txt', 'w+')
+
+def cleantext(path, file):
+    fnew = open(path + '/' + 'no_emptyline.txt', 'w+')
     fnew.truncate()  # clear the content of new file
     raw = file.replace('\n', ' ')
-    text = raw.lower()
-    sentences = sent_tokenize(text)
+    #text = raw.lower()
+    sentences = sent_tokenize(raw)
     for sentence in sentences:
         lines = re.split('\n+', sentence)  # exclude extra empty lines
         for line in lines:
@@ -16,6 +17,7 @@ def cleantext(file,path):
             fnew.write(newline)
             fnew.write('\n')
     fnew.close()
+
 
 def No_EmptyLine_Local(filepath):
     file = open(filepath, 'r')
@@ -43,10 +45,11 @@ if __name__ == '__main__':
     else:
         No_EmptyLine_Local(sys.argv[1])
 
-def No_EmptyLine_Web(url,path):
+
+def No_EmptyLine_Web(url, path):
     response = request.urlopen(url)
     file = response.read().decode('utf8')
-    fnew = open(path+'/'+'_no_emptyline.txt', 'w+')
+    fnew = open(path + '/' + '_no_emptyline.txt', 'w+')
     fnew.truncate()  # clear the content of new file
 
     raw = file.replace('\n', ' ')
@@ -69,4 +72,3 @@ if __name__ == '__main__':
         u"file path is required, please check your path!"
     else:
         No_EmptyLine_Local(sys.argv[2])
-

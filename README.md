@@ -5,6 +5,7 @@ This is a simple application for bigram extraction from English texts
 Environments:
 ----------------------------------------------
   Python version 3.7  
-  Required Packages: nltk, urllib, os, tkinter  
+  Required Packages: nltk, urllib, os, tkinter, pandas, spacy, csv
+  spacy model: "en_core_web_sm"
   
-Open 2gram.py and run as its instruction
+Open main_GUI.py and follow its instruction

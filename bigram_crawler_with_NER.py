@@ -1,39 +1,37 @@
-# -*- coding: utf-8 -*-
-import nltk, os, csv, spacy
-from urllib import request
+import nltk, os, spacy, csv
 from nltk import *
 from nltk.corpus import stopwords
-from nltk.corpus import brown
-from collections import Counter
-import tkinter.messagebox as messagebox
-nlp = spacy.load("en_core_web_sm", disable=["ner"])
+
+nlp = spacy.load("en_core_web_sm")
 nlp.max_length = 1500000
 
-def bigrams_to_csv(filepath):
+def bigrams_with_ner_to_csv(path):
     tkinter.messagebox.showwarning(title='Warning', message='This takes some time(This process last about 2.5 minutes with a 1.2 Mb txt file), Please be patient!\nOnce it is finished, It will give you a notification!')
+    file_ = open(path + '/' + 'no_emptyline.txt', 'rt')
+    doc = nlp(file_.read())
 
-    file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
-    #file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
-    #file_Bigrams.truncate()
-    doc = nlp(file.read())
-    file.close()
+    #Exclude Entity type PERSON, GPE, LOC
+    ents = [e.text for e in doc.ents if e.label_ == "PERSON" or e.label_ == "GPE" or e.label_ == "LOC"]
+    line = ''
+    for i in ents:
+        line += i + ' '
+    ents_i = word_tokenize(line)
+    ents_i = list(set(ents_i))
 
-    List_ = []
     tokens = []
-
+    List_ = []
+    #Lemmatization
     for item in doc:
         tokens.append(item.lemma_)
-    token_pair = [tokens[i:i + 2] for i in
-                range(0, len(tokens), 1)]  # loop through every two tokens to create raw Bigrams
+    #loop through every two tokens to create raw Bigrams
+    token_pair = [tokens[i:i + 2] for i in range(0, len(tokens), 1)]
+
     for ii in token_pair:
         stop_words = set(stopwords.words('english'))
-        i = [i for i in ii if i.isalpha() and i not in stop_words]
+        i = [i for i in ii if i not in stop_words and i not in ents_i and i.isalpha()]
         if len(i) > 1:
             List_.append(i)
-                #file_Bigrams.write(str(i))
-                #file_Bigrams.write('\n')
-
-    #file_Bigrams.close()
+    file_.close()
 
     #convert strings into lower case
     List_lower = []
@@ -41,17 +39,11 @@ def bigrams_to_csv(filepath):
         x = [s.lower() for s in l]
         List_lower.append(x)
 
-    #Calculate Occurrences
     count_times = []
     for i in List_lower:
         count_times.append(List_lower.count(i))
         m = max(count_times)
         n = count_times.index(m)
-
-
-
-    # L = len(List) - len(count_times)
-    # print(L)
 
     index = 0
     D_value = {}
@@ -89,30 +81,6 @@ def bigrams_to_csv(filepath):
         ind += 1
 
 
-    # N-Gram Tagging
-    ###############################################################
-
-    # brown_tagged_sents = brown.tagged_sents(categories='news')
-    # brown_sents = brown.sents(categories='news')
-    # unigram_tagger = nltk.UnigramTagger(brown_tagged_sents)
-    # unigram_tagger.tag(brown_sents[2007])
-    # unigram_tagger.evaluate(brown_tagged_sents)
-    #
-    # size = int(len(brown_tagged_sents) * 0.9)
-    # size
-    # train_sents = brown_tagged_sents[:size]
-    # test_sents = brown_tagged_sents[size:]
-    # unigram_tagger = nltk.UnigramTagger(train_sents)
-    # print(unigram_tagger.evaluate(test_sents))
-    # bigram_tagger = nltk.BigramTagger(train_sents)
-    # print(bigram_tagger.evaluate(test_sents))
-    # t0 = nltk.DefaultTagger('NN')
-    # t1 = nltk.UnigramTagger(train_sents, backoff=t0)
-    # t2 = nltk.BigramTagger(train_sents, backoff=t1)
-    # print(t2.evaluate(test_sents))
-
-
-
     Tag=[]
 
     # Tag set choice
@@ -141,7 +109,7 @@ def bigrams_to_csv(filepath):
         rows.append(dict)
         num += 1
 
-    with open(filepath + '/' + 'database.csv', 'w', newline='') as f:
+    with open(path + '/' + 'database.csv', 'w', newline='') as f:
         f_csv = csv.DictWriter(f, headers)
         f_csv.writeheader()
         f_csv.writerows(rows)
