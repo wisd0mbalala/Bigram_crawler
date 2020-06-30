@@ -123,9 +123,9 @@ def createpage(master):
         frame2.place(relx=0.5)
         lstbox1 = Listbox(frame1)
         lstbox1.pack()
-        btn1 = Button(frame2, text="Calculate", command=freqpresent)
+        btn1 = ttk.Button(frame2, text="Calculate", command=freqpresent)
         btn1.pack(fill=X)
-        btn2 = Button(frame2, text="Clear", command=clear)
+        btn2 = ttk.Button(frame2, text="Clear", command=clear)
         btn2.pack(fill=X)
 
     master = Frame(root)
