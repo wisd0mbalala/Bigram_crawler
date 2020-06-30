@@ -10,7 +10,7 @@ nlp = spacy.load("en_core_web_sm", disable=["ner"])
 nlp.max_length = 1500000
 
 def bigrams_to_csv(filepath):
-    tkinter.messagebox.showwarning(title='Warning', message='This takes some time(This process last about 2.5 minutes with a 1.2 Mb txt file), Please be patient!\nOnce it is finished, It will give you a notification!')
+    tkinter.messagebox.showwarning(title='Warning', message='This takes some time, Please be patient!\n(This process last about 2.5 minutes with a 1.2 Mb txt file)\nOnce it is finished, It will give you a notification!')
 
     file = open(filepath + '/' + 'no_emptyline.txt', 'rt')
     #file_Bigrams = open(filepath + '/' + 'bigrams.txt', 'w+')
