@@ -17,7 +17,7 @@ def sortFreq(path):
     df_final = pd.merge(df_final_3, df, on='POS-Tags')
     df_final = df_final[['POS-Tags', 'Occurrences_x', 'Occurrences', 'Bigram']]
     df_final = df_final.sort_values(['Occurrences_x', 'Occurrences'], ascending=False)
-    df_final.to_csv(path + '/' + 'pos_freq.csv',index=False)
+    df_final.to_csv(path + '/' + 'pos_freq.csv', index=False)
 
     d_new = df_final[['POS-Tags', 'Occurrences_x']]
     d_new = d_new.drop_duplicates()
