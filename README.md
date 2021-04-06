@@ -12,3 +12,6 @@ Environments:
 
   
 Open main_GUI.py and follow its instruction
+
+
+![contents](./poster_Lingzhi_Li_final.pdf)
